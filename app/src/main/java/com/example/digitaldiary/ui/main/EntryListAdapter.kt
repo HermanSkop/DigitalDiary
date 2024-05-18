@@ -4,11 +4,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.RecyclerView
 import com.example.digitaldiary.R
 import com.example.digitaldiary.repository.InMemoryEntryRepository
-import com.google.android.material.snackbar.Snackbar
 
 
 class EntryListAdapter(private val mainViewModel: MainViewModel) : RecyclerView.Adapter<EntryListAdapter.EntryViewHolder>() {
@@ -29,9 +27,9 @@ class EntryListAdapter(private val mainViewModel: MainViewModel) : RecyclerView.
 
     override fun onBindViewHolder(holder: EntryViewHolder, position: Int) {
         val item = entryRepository.getEntries()[position]
-        holder.entryView.text = item.content
+        holder.entryView.text = item.title
         holder.entryView.setOnClickListener {
-            mainViewModel.onEntryClicked(holder.entryView)
+            mainViewModel.onEntryClicked()
         }
     }
 

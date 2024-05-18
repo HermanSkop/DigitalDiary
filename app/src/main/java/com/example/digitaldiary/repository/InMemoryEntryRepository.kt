@@ -1,15 +1,15 @@
 package com.example.digitaldiary.repository
 
 import com.example.digitaldiary.model.Entry
+import java.time.LocalDate
 
 object InMemoryEntryRepository : EntryRepository {
     private val entryList = mutableListOf(
-        Entry(1, "Entry 1"),
-        Entry(2, "Entry 2"),
-        Entry(3, "Entry 3"),
-        Entry(4, "Entry 4"),
-        Entry(5, "Entry 5"),
-        Entry(6, "Entry 6")
+        Entry(1, "Entry 1", "Content 1", LocalDate.now()),
+        Entry(2, "Entry 2", "Content 2", LocalDate.now()),
+        Entry(3, "Entry 3", "Content 3", LocalDate.now()),
+        Entry(4, "Entry 4", "Content 4", LocalDate.now()),
+        Entry(5, "Entry 5", "Content 5", LocalDate.now())
     )
 
     override fun addEntry(entry: Entry) {

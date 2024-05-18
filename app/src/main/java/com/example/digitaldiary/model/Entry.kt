@@ -1,4 +1,5 @@
 package com.example.digitaldiary.model
 
-data class Entry(val id: Int, val content: String){
-}
+import java.time.LocalDate
+
+data class Entry(val id: Int, val title: String, val content: String, val date: LocalDate)

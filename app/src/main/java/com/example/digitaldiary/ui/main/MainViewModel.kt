@@ -1,13 +1,17 @@
 package com.example.digitaldiary.ui.main
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
 class MainViewModel : ViewModel() {
-    val editNavigation: LiveData<Boolean> = MutableLiveData()
+    val editNavigation: MutableLiveData<Boolean> = MutableLiveData()
 
-    fun onEntryClicked(view: android.widget.Button) {
-        (editNavigation as MutableLiveData).value = true
+    fun onEntryClicked() {
+        editNavigation.value = true
+    }
+
+    fun onBackClicked(): Boolean {
+        editNavigation.value = false
+        return editNavigation.value!!
     }
 }
