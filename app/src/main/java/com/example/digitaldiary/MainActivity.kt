@@ -11,6 +11,7 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.digitaldiary.databinding.ActivityMainBinding
 import com.example.digitaldiary.ui.main.MainViewModel
@@ -36,17 +37,26 @@ class MainActivity : AppCompatActivity() {
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
 
-        binding.fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null)
-                .setAnchorView(R.id.fab).show()
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.NoteFragment -> {
+                    binding.fab.setOnClickListener { view ->
+                        Snackbar.make(view, "Action in NoteFragment", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null)
+                            .setAnchorView(R.id.fab).show()
+                    }
+                    binding.fab.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_attach))
+                }
+                R.id.MainFragment -> {
+                    binding.fab.setOnClickListener { view ->
+                        Snackbar.make(view, "Action in MainFragment", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null)
+                            .setAnchorView(R.id.fab).show()
+                    }
+                    binding.fab.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_add))
+                }
+            }
         }
-
-        onBackPressedDispatcher.addCallback {
-            viewModel.onBackClicked()
-        }
-
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

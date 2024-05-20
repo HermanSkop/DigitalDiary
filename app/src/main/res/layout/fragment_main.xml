@@ -4,7 +4,8 @@
     android:id="@+id/entry_list"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/holo_red_dark"
+    android:background="@color/background"
+    android:layout_marginTop="8dp"
     tools:listitem="@layout/entry_item">
 
 </androidx.recyclerview.widget.RecyclerView>
