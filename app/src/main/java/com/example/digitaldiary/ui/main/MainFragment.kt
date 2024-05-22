@@ -34,7 +34,6 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val database = AppDatabase.getDatabase(requireContext())
         val adapter = EntryListAdapter(viewModel)
         binding.entryList.apply {
             this.adapter = adapter
