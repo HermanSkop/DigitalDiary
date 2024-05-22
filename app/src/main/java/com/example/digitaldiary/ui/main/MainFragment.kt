@@ -5,12 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.digitaldiary.R
+import com.example.digitaldiary.database.AppDatabase
 import com.example.digitaldiary.databinding.FragmentMainBinding
 
 class MainFragment : Fragment() {
@@ -34,6 +34,7 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val database = AppDatabase.getDatabase(requireContext())
         val adapter = EntryListAdapter(viewModel)
         binding.entryList.apply {
             this.adapter = adapter

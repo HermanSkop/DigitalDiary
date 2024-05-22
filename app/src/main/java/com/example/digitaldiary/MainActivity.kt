@@ -1,5 +1,6 @@
 package com.example.digitaldiary
 
+import com.example.digitaldiary.database.AppDatabase
 import android.os.Bundle
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
@@ -9,12 +10,12 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
-import androidx.activity.OnBackPressedCallback
-import androidx.activity.addCallback
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
+import androidx.room.Room
 import com.example.digitaldiary.databinding.ActivityMainBinding
 import com.example.digitaldiary.ui.main.MainViewModel
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -22,9 +23,14 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel: MainViewModel
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        db = Room.databaseBuilder(
+            applicationContext,
+            AppDatabase::class.java, "diary"
+        ).build()
+
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -74,12 +80,13 @@ class MainActivity : AppCompatActivity() {
             else -> super.onOptionsItemSelected(item)
         }
     }
-
 override fun onSupportNavigateUp(): Boolean {
     val navController = findNavController(R.id.nav_host_fragment_content_main)
     viewModel.onBackClicked()
     return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
 }
 
-
+    companion object {
+        lateinit var db: AppDatabase
+    }
 }

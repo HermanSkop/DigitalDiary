@@ -6,11 +6,10 @@ import android.view.ViewGroup
 import android.widget.Button
 import androidx.recyclerview.widget.RecyclerView
 import com.example.digitaldiary.R
-import com.example.digitaldiary.repository.InMemoryEntryRepository
 
 
-class EntryListAdapter(private val mainViewModel: MainViewModel) : RecyclerView.Adapter<EntryListAdapter.EntryViewHolder>() {
-    private val entryRepository: InMemoryEntryRepository = InMemoryEntryRepository
+class EntryListAdapter(private val mainViewModel: MainViewModel) :
+    RecyclerView.Adapter<EntryListAdapter.EntryViewHolder>() {
 
     class EntryViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val entryView: Button = view.findViewById(R.id.entry_item)
@@ -18,15 +17,14 @@ class EntryListAdapter(private val mainViewModel: MainViewModel) : RecyclerView.
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EntryViewHolder {
-        val adapterLayout = LayoutInflater.from(parent.context)
-            .inflate(R.layout.entry_item, parent, false)
-
+        val adapterLayout =
+            LayoutInflater.from(parent.context).inflate(R.layout.entry_item, parent, false)
         return EntryViewHolder(adapterLayout)
     }
 
 
     override fun onBindViewHolder(holder: EntryViewHolder, position: Int) {
-        val item = entryRepository.getEntries()[position]
+        val item = mainViewModel.getNotes().value!![position]
         holder.entryView.text = item.title
         holder.entryView.setOnClickListener {
             mainViewModel.onEntryClicked()
@@ -34,5 +32,5 @@ class EntryListAdapter(private val mainViewModel: MainViewModel) : RecyclerView.
     }
 
 
-    override fun getItemCount() = entryRepository.getEntries().size
+    override fun getItemCount() = mainViewModel.getNotes().value?.size ?: 0
 }
