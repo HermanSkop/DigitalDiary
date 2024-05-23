@@ -15,7 +15,7 @@
 
     <fragment
         android:id="@+id/NoteFragment"
-        android:name="com.example.digitaldiary.ui.entry.NoteFragment"
+        android:name="com.example.digitaldiary.ui.note.NoteFragment"
         android:label="Note Fragment">
         <action
             android:id="@+id/action_NoteFragment_to_MainFragment"

@@ -10,25 +10,23 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.digitaldiary.R
-import com.example.digitaldiary.database.AppDatabase
+import com.example.digitaldiary.ViewModel
 import com.example.digitaldiary.databinding.FragmentMainBinding
 
 class MainFragment : Fragment() {
 
     private var _binding: FragmentMainBinding? = null
-    private lateinit var viewModel: MainViewModel
+    private lateinit var viewModel: ViewModel
 
     private val binding get() = _binding!!
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        viewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
+        viewModel = ViewModelProvider(requireActivity())[ViewModel::class.java]
         _binding = FragmentMainBinding.inflate(inflater, container, false)
 
         return binding.root
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -44,14 +42,19 @@ class MainFragment : Fragment() {
             if (it) findNavController().navigate(R.id.action_MainFragment_to_NoteFragment)
         }
 
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                if (viewModel.onBackClicked()) {
-                    isEnabled = false
-                    requireActivity().onBackPressedDispatcher.onBackPressed()
+        viewModel.notesLiveData.observe(viewLifecycleOwner) { notes ->
+            adapter.updateNotes(notes ?: emptyList())
+        }
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (viewModel.onBackClicked()) {
+                        isEnabled = false
+                        requireActivity().onBackPressedDispatcher.onBackPressed()
+                    }
                 }
-            }
-        })
+            })
     }
 
     override fun onDestroyView() {

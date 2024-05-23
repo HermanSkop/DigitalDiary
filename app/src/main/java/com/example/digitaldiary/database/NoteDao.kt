@@ -11,7 +11,7 @@ import com.example.digitaldiary.model.Note
 @Dao
 interface NoteDao {
     @Query("SELECT * FROM note")
-    fun getAll(): LiveData<List<Note>>
+    fun getAll(): List<Note>
 
     @Insert
     fun insert(note: Note)
@@ -21,5 +21,8 @@ interface NoteDao {
 
     @Update
     fun update(note: Note)
+
+    @Query("SELECT * FROM note WHERE id = :id")
+    fun get(id: Int): Note
 
 }

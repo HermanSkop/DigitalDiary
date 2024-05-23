@@ -5,4 +5,5 @@ D    <color name="primary">#FFBB70</color>
     <color name="accent">#FFEC9E</color>
     <color name="background">#FFFBDA</color>
     <color name="text">#494949</color>
+    <color name="textBright">#959595</color>
 </resources>
