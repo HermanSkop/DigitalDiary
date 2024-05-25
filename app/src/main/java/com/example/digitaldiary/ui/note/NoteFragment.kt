@@ -13,15 +13,13 @@ import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
+import com.example.digitaldiary.MainActivity
 import com.example.digitaldiary.R
 import com.example.digitaldiary.ViewModel
 import com.example.digitaldiary.databinding.FragmentNoteBinding
-import com.example.digitaldiary.model.Note
 import java.time.LocalDate
 
-/**
- * A simple [Fragment] subclass as the second destination in the navigation.
- */
+
 class NoteFragment : Fragment() {
 
     private var _binding: FragmentNoteBinding? = null
@@ -39,11 +37,6 @@ class NoteFragment : Fragment() {
         return binding.root
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -54,10 +47,14 @@ class NoteFragment : Fragment() {
                     R.id.save -> {
                         if (binding.title.text.isBlank()) context?.resources?.let {
                             viewModel.showErrorMessage(it.getString(R.string.empty_title))
-                        } else
+                        } else {
                             viewModel.saveNote(
-                                binding.title.text.toString(), binding.content.text.toString()
-                            )
+                                binding.title.text.toString(),
+                                binding.content.text.toString(),
+                                activity as MainActivity
+                            ) { fillNote() }
+
+                        }
                         return true
                     }
                 }
@@ -82,6 +79,7 @@ class NoteFragment : Fragment() {
             contentLayout.hint = LocalDate.now().toString()
             contentLayout.defaultHintTextColor =
                 ColorStateList.valueOf(resources.getColor(R.color.textBright, null))
+            location.text = viewModel.currentNote?.location
         }
     }
 }

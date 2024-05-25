@@ -1,14 +1,14 @@
 package com.example.digitaldiary
 
+import androidx.activity.OnBackPressedCallback
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.digitaldiary.model.Note
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 class ViewModel : ViewModel() {
@@ -47,15 +47,21 @@ class ViewModel : ViewModel() {
         showErrorMessage(e.message!!)
     }
 
-    fun saveNote(title: String, content: String) {
+    fun saveNote(title: String, content: String, activity: MainActivity, callback: () -> Unit){
         if (title.isBlank()) throw IllegalArgumentException("Title cannot be empty")
-        if (currentNote == null) createNote(
-            Note(title = title, content = content, date = LocalDate.now())
-        ) else updateNote(
-            Note(
-                currentNote!!.id, title, content, LocalDate.now()
-            )
-        )
+        activity.getLocation { location ->
+            val note: Note
+            if (currentNote == null) {
+                note = Note(title = title, content = content, date = LocalDate.now(), location = location)
+                createNote(note)
+            }
+            else {
+                note = Note(currentNote!!.id, title, content, LocalDate.now(), location)
+                updateNote(note)
+            }
+            currentNote = note
+            callback()
+        }
     }
 
     private fun createNote(note: Note) {

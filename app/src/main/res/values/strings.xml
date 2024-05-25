@@ -15,4 +15,6 @@
     <string name="delete_note_message">Do you want to delete the note?</string>
     <string name="delete_note">Delete note</string>
     <string name="empty_title">Title cannot be empty</string>
+    <string name="unknown_location">Location is unknown</string>
+    <string name="permission_denied">Location permission denied</string>
 </resources>
