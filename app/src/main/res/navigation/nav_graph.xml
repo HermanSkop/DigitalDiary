@@ -20,6 +20,13 @@
         <action
             android:id="@+id/action_NoteFragment_to_MainFragment"
             app:destination="@id/MainFragment" />
+        <action
+            android:id="@+id/action_NoteFragment_to_PaintFragment"
+            app:destination="@id/PaintFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/PaintFragment"
+        android:name="com.example.digitaldiary.ui.paint.PaintFragment"
+        android:label="PaintFragment" />
 
 </navigation>

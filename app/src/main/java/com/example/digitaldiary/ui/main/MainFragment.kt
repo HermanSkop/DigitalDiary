@@ -38,23 +38,19 @@ class MainFragment : Fragment() {
             layoutManager = LinearLayoutManager(context)
         }
 
-        viewModel.editNavigation.observe(viewLifecycleOwner) {
-            if (it) findNavController().navigate(R.id.action_MainFragment_to_NoteFragment)
+        viewModel.navigateTo.observe(viewLifecycleOwner) {
+            val destination = it.getContentIfNotHandled() ?: return@observe
+            when (destination) {
+                ViewModel.Destination.NOTE -> {
+                    findNavController().navigate(R.id.action_MainFragment_to_NoteFragment)
+                }
+                else -> throw IllegalArgumentException("Unknown destination: $it")
+            }
         }
 
         viewModel.notesLiveData.observe(viewLifecycleOwner) { notes ->
             adapter.updateNotes(notes ?: emptyList())
         }
-
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner,
-            object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    if (viewModel.onBackClicked()) {
-                        isEnabled = false
-                        requireActivity().onBackPressedDispatcher.onBackPressed()
-                    }
-                }
-            })
     }
 
     override fun onDestroyView() {

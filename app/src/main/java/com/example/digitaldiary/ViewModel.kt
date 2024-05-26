@@ -1,6 +1,5 @@
 package com.example.digitaldiary
 
-import androidx.activity.OnBackPressedCallback
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -12,14 +11,21 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 class ViewModel : ViewModel() {
-    val editNavigation: MutableLiveData<Boolean> = MutableLiveData()
     val errorMessage: MutableLiveData<String> = MutableLiveData()
     private val noteDao = MainActivity.db.noteDao()
-    var currentNote: Note? = null
+
+    private val _currentNote: MutableLiveData<Note?> = MutableLiveData()
+    val currentNote: LiveData<Note?> = _currentNote
 
     private val _notes: MutableLiveData<List<Note>> = MutableLiveData()
     val notesLiveData: LiveData<List<Note>> = _notes
 
+    private val _navigateTo: MutableLiveData<Event<Destination>> = MutableLiveData()
+    val navigateTo: LiveData<Event<Destination>> = _navigateTo
+
+    private val exceptionHandler = CoroutineExceptionHandler { _, e ->
+        showErrorMessage(e.message!!)
+    }
 
     init {
         refreshNotes()
@@ -32,35 +38,31 @@ class ViewModel : ViewModel() {
         }
     }
 
-    fun editNote(note: Note? = null) {
-        editNavigation.value = true
-        if (note != null) currentNote = note
+    fun navigateEditNote(note: Note) {
+        _navigateTo.value = Event(Destination.NOTE)
+        _currentNote.value = note
     }
 
-    fun onBackClicked(): Boolean {
-        editNavigation.value = false
-        currentNote = null
-        return editNavigation.value!!
+    fun navigateCreateNote() {
+        _navigateTo.value = Event(Destination.NOTE)
+        _currentNote.value = null
     }
 
-    private val exceptionHandler = CoroutineExceptionHandler { _, e ->
-        showErrorMessage(e.message!!)
-    }
 
-    fun saveNote(title: String, content: String, activity: MainActivity, callback: () -> Unit){
+    fun saveNote(title: String, content: String, activity: MainActivity) {
         if (title.isBlank()) throw IllegalArgumentException("Title cannot be empty")
         activity.getLocation { location ->
             val note: Note
-            if (currentNote == null) {
-                note = Note(title = title, content = content, date = LocalDate.now(), location = location)
+            if (currentNote.value == null) {
+                note = Note(
+                    title = title, content = content, date = LocalDate.now(), location = location
+                )
                 createNote(note)
-            }
-            else {
-                note = Note(currentNote!!.id, title, content, LocalDate.now(), location)
+            } else {
+                note = Note(currentNote.value!!.id, title, content, LocalDate.now(), location)
                 updateNote(note)
             }
-            currentNote = note
-            callback()
+            _currentNote.value = note
         }
     }
 
@@ -88,4 +90,23 @@ class ViewModel : ViewModel() {
         }
     }
 
+    enum class Destination {
+        MAIN, NOTE, PAINT, AUDIO
+    }
+
+    class Event<out T>(private val content: T) {
+
+        private var hasBeenHandled = false
+
+        fun getContentIfNotHandled(): T? {
+            return if (hasBeenHandled) {
+                null
+            } else {
+                hasBeenHandled = true
+                content
+            }
+        }
+
+        fun peekContent(): T = content
+    }
 }

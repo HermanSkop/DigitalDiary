@@ -13,6 +13,7 @@ import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.example.digitaldiary.MainActivity
 import com.example.digitaldiary.R
 import com.example.digitaldiary.ViewModel
@@ -52,7 +53,7 @@ class NoteFragment : Fragment() {
                                 binding.title.text.toString(),
                                 binding.content.text.toString(),
                                 activity as MainActivity
-                            ) { fillNote() }
+                            )
 
                         }
                         return true
@@ -65,6 +66,21 @@ class NoteFragment : Fragment() {
                 menuInflater.inflate(R.menu.menu_note, menu)
             }
         }, viewLifecycleOwner, Lifecycle.State.STARTED)
+
+        viewModel.navigateTo.observe(viewLifecycleOwner) {
+            val destination = it.getContentIfNotHandled() ?: return@observe
+            when (destination) {
+                ViewModel.Destination.PAINT -> {
+                    findNavController().navigate(R.id.action_NoteFragment_to_PaintFragment)
+                }
+                // ViewModel.Destination.AUDIO -> TODO()
+                else -> throw IllegalArgumentException("Unknown destination: $it")
+            }
+        }
+
+        viewModel.currentNote.observe(viewLifecycleOwner) {
+            fillNote()
+        }
     }
 
     override fun onDestroyView() {
@@ -74,12 +90,12 @@ class NoteFragment : Fragment() {
 
     private fun fillNote() {
         with(binding) {
-            title.setText(viewModel.currentNote?.title)
-            content.setText(viewModel.currentNote?.content)
+            title.setText(viewModel.currentNote.value?.title)
+            content.setText(viewModel.currentNote.value?.content)
             contentLayout.hint = LocalDate.now().toString()
             contentLayout.defaultHintTextColor =
                 ColorStateList.valueOf(resources.getColor(R.color.textBright, null))
-            location.text = viewModel.currentNote?.location
+            location.text = viewModel.currentNote.value?.location
         }
     }
 }

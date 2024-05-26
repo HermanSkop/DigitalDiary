@@ -1,7 +1,6 @@
 package com.example.digitaldiary
 
 import android.Manifest
-import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.os.Bundle
@@ -76,7 +75,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
-        viewModel.onBackClicked()
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
@@ -100,7 +98,7 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 R.id.MainFragment -> {
-                    binding.fab.setOnClickListener { viewModel.editNote() }
+                    binding.fab.setOnClickListener { viewModel.navigateCreateNote() }
                     binding.fab.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_add))
                 }
             }

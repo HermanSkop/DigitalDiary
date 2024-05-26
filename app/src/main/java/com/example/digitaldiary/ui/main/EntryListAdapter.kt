@@ -37,7 +37,7 @@ class EntryListAdapter(private val viewModel: ViewModel) :
         with(holder.entryView) {
             text = item.title
             setOnClickListener {
-                viewModel.editNote(item)
+                viewModel.navigateEditNote(item)
             }
             setOnLongClickListener {
                 AlertDialog.Builder(context)
