@@ -62,7 +62,7 @@ class ViewModel : ViewModel() {
 
 
     fun saveNote(title: String, content: String, activity: MainActivity) {
-        if (title.isBlank()) throw IllegalArgumentException("Title cannot be empty")
+        if (title.isBlank()) throw IllegalArgumentException(activity.getString(R.string.empty_title_error))
         activity.getLocation { location ->
             val note: Note
             if (currentNote.value?.id?.toInt() == 0) {

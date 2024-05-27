@@ -143,17 +143,17 @@ class MainActivity : AppCompatActivity() {
                 this, Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            callback("Unknown city")
+            callback(getString(R.string.unknown_city))
         }
         fusedLocationClient.lastLocation.addOnSuccessListener { location ->
             if (location != null) {
                 val geocoder = Geocoder(this)
                 val addresses = geocoder.getFromLocation(location.latitude, location.longitude, 1)
                 if (!addresses.isNullOrEmpty()) {
-                    val cityName = addresses[0].locality ?: "Unknown city"
+                    val cityName = addresses[0].locality ?: getString(R.string.unknown_city)
                     callback(cityName)
-                } else callback("Unknown city")
-            } else callback("Unknown city")
+                } else callback(getString(R.string.unknown_city))
+            } else callback(getString(R.string.unknown_city))
         }
     }
 

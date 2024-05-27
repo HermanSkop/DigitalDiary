@@ -30,4 +30,6 @@
     <string name="recording_preparation_failed">Recording preparation failed</string>
     <string name="audio_hint">You are being recorded! Press stop to submit recording.</string>
     <string name="delete_recording">Delete recording</string>
+    <string name="unknown_city">Unknown city</string>
+    <string name="empty_title_error">Title cannot be empty</string>
 </resources>
