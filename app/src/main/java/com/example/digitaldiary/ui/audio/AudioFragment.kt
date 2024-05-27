@@ -46,6 +46,7 @@ class AudioFragment : Fragment() {
                 viewModel.navigateEditNote(null)
             }
         }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -66,6 +67,8 @@ class AudioFragment : Fragment() {
                 }
             }
         }
+
+        (activity as MainActivity).hideFab()
     }
 
     private fun setUpMenu() {
@@ -103,7 +106,10 @@ class AudioFragment : Fragment() {
         val recordingsDir = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             File(requireContext().getExternalFilesDir(Environment.DIRECTORY_MUSIC), "recordings")
         } else {
-            File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC), "recordings")
+            File(
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC),
+                "recordings"
+            )
         }
         if (!recordingsDir.exists()) {
             recordingsDir.mkdirs()
@@ -118,7 +124,11 @@ class AudioFragment : Fragment() {
             try {
                 prepare()
             } catch (e: IOException) {
-                Toast.makeText(requireContext(), getString(R.string.recording_preparation_failed), Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.recording_preparation_failed),
+                    Toast.LENGTH_LONG
+                ).show()
                 e.printStackTrace()
                 return
             }
@@ -132,7 +142,10 @@ class AudioFragment : Fragment() {
             put(MediaStore.MediaColumns.DISPLAY_NAME, "recording_$timeStamp")
             put(MediaStore.MediaColumns.MIME_TYPE, "audio/3gpp")
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_MUSIC + "/recordings")
+                put(
+                    MediaStore.MediaColumns.RELATIVE_PATH,
+                    Environment.DIRECTORY_MUSIC + "/recordings"
+                )
             }
         }
         val audioUri = resolver.insert(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, contentValues)

@@ -157,6 +157,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun hideFab() {
+        binding.fab.hide()
+    }
+
+    fun showFab() {
+        binding.fab.show()
+    }
+
     companion object {
         lateinit var db: AppDatabase
     }

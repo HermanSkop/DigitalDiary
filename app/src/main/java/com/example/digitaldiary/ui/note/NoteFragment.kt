@@ -61,6 +61,7 @@ class NoteFragment : Fragment() {
         binding.audioToggle.setOnClickListener {
             toggleAudio(viewModel.currentNote.value!!.audioUri!!)
         }
+        (activity as MainActivity).showFab()
     }
 
     private fun deleteAudio() {

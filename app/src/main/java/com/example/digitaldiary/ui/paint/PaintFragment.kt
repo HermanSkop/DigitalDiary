@@ -22,6 +22,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.example.digitaldiary.MainActivity
 import com.example.digitaldiary.R
 import com.example.digitaldiary.ViewModel
 import com.example.digitaldiary.databinding.FragmentPaintBinding
@@ -65,8 +66,8 @@ class PaintFragment : Fragment() {
             uri = requireContext().contentResolver.insert(images, newImageInfo)
 
             registerForActivityResult(ActivityResultContracts.TakePicture(), photoCallback).launch(
-                    uri
-                )
+                uri
+            )
         } else {
             Toast.makeText(
                 requireContext(),
@@ -88,6 +89,9 @@ class PaintFragment : Fragment() {
                 }
             }
         }
+
+        (activity as MainActivity).hideFab()
+
         setUpMenu()
     }
 
