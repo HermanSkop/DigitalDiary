@@ -7,6 +7,6 @@
     <item
         android:id="@+id/stop"
         android:orderInCategory="120"
-        android:title="@string/save"
+        android:title="@string/stop"
         app:showAsAction="ifRoom" />
 </menu>

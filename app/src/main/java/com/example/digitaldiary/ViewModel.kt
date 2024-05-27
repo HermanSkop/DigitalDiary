@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.digitaldiary.model.Note
-import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -56,7 +55,8 @@ class ViewModel : ViewModel() {
             content = "",
             date = LocalDate.now(),
             location = "",
-            imageUri = ""
+            imageUri = "",
+            audioUri = ""
         )
     }
 
@@ -71,7 +71,8 @@ class ViewModel : ViewModel() {
                     content = content,
                     date = LocalDate.now(),
                     location = location,
-                    imageUri = currentNote.value?.imageUri
+                    imageUri = currentNote.value?.imageUri,
+                    audioUri = currentNote.value?.audioUri
                 )
                 createNote(note)
             } else {
@@ -81,7 +82,8 @@ class ViewModel : ViewModel() {
                     content,
                     LocalDate.now(),
                     location,
-                    currentNote.value?.imageUri
+                    currentNote.value?.imageUri,
+                    currentNote.value?.audioUri
                 )
                 updateNote(note)
             }
@@ -120,17 +122,27 @@ class ViewModel : ViewModel() {
         _navigateTo.value = Event(Destination.PAINT)
     }
 
+    fun navigateToAudio() {
+        _navigateTo.value = Event(Destination.AUDIO)
+    }
+
     fun attachImage(uri: Uri) {
         _currentNote.value = _currentNote.value?.copy(imageUri = uri.toString())
-        navigateEditNote(_currentNote.value)
+    }
+    fun attachAudio(uri: Uri) {
+        _currentNote.value = _currentNote.value?.copy(audioUri = uri.toString())
     }
 
     fun removeImage() {
         _currentNote.value = _currentNote.value?.copy(imageUri = null)
     }
 
+    fun removeAudio() {
+        _currentNote.value = _currentNote.value?.copy(audioUri = null)
+    }
+
     enum class Destination {
-        MAIN, NOTE, PAINT, AUDIO
+        NOTE, PAINT, AUDIO
     }
 
     class Event<out T>(private val content: T) {
@@ -145,7 +157,5 @@ class ViewModel : ViewModel() {
                 content
             }
         }
-
-        fun peekContent(): T = content
     }
 }

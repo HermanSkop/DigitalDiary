@@ -16,7 +16,7 @@ class PaintView(context: Context, attrs: AttributeSet) : View(context, attrs){
     private val paint = Paint().apply {
         style = Paint.Style.STROKE
         strokeWidth = 10f
-        color = Color.CYAN
+        color = Color.RED
         strokeJoin = Paint.Join.ROUND
         strokeCap = Paint.Cap.ROUND
     }

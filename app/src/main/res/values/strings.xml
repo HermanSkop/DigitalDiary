@@ -21,4 +21,13 @@
     <string name="not_supported">This feature is not available on your android version</string>
     <string name="delete_image">Delete image</string>
     <string name="delete_image_message">Do you want to delete the image?</string>
+    <string name="choose_an_option">Choose an option</string>
+    <string name="make_a_photo">Make a photo</string>
+    <string name="record_audio">Record an audio</string>
+    <string name="stop">stop</string>
+    <string name="play">Play recording</string>
+    <string name="diary">Diary</string>
+    <string name="recording_preparation_failed">Recording preparation failed</string>
+    <string name="audio_hint">You are being recorded! Press stop to submit recording.</string>
+    <string name="delete_recording">Delete recording</string>
 </resources>

@@ -1,6 +1,7 @@
 package com.example.digitaldiary.ui.note
 
 import android.content.res.ColorStateList
+import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -28,6 +29,7 @@ class NoteFragment : Fragment() {
     private var _binding: FragmentNoteBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewModel: ViewModel
+    private var player: MediaPlayer? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -53,6 +55,40 @@ class NoteFragment : Fragment() {
         }
         menuSetUp()
         viewModelSetUp()
+        binding.deleteAudio.setOnClickListener {
+            deleteAudio()
+        }
+        binding.audioToggle.setOnClickListener {
+            toggleAudio(viewModel.currentNote.value!!.audioUri!!)
+        }
+    }
+
+    private fun deleteAudio() {
+        viewModel.removeAudio()
+        binding.audio.visibility = View.GONE
+        stopAudio()
+    }
+
+    private fun toggleAudio(uri: String) {
+        if (player == null) {
+            playAudio(uri)
+        } else stopAudio()
+    }
+
+    private fun playAudio(uri: String) {
+        player = MediaPlayer.create(context, Uri.parse(uri))
+        player?.start()
+        player?.setOnCompletionListener {
+            stopAudio()
+        }
+        binding.audioToggle.text = resources.getString(R.string.stop)
+    }
+
+    private fun stopAudio() {
+        player?.stop()
+        player?.release()
+        player = null
+        binding.audioToggle.text = resources.getString(R.string.play)
     }
 
     private fun menuSetUp() {
@@ -60,7 +96,7 @@ class NoteFragment : Fragment() {
         menuHost.addMenuProvider(object : MenuProvider {
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 when (menuItem.itemId) {
-                    R.id.save -> {
+                    R.id.stop -> {
                         if (binding.title.text.isBlank()) context?.resources?.let {
                             viewModel.showErrorMessage(it.getString(R.string.empty_title))
                         } else {
@@ -91,7 +127,11 @@ class NoteFragment : Fragment() {
                     ViewModel.Destination.PAINT -> {
                         findNavController().navigate(R.id.action_NoteFragment_to_PaintFragment)
                     }
-                    // ViewModel.Destination.AUDIO -> TODO()
+
+                    ViewModel.Destination.AUDIO -> {
+                        findNavController().navigate(R.id.action_NoteFragment_to_audioFragment)
+                    }
+
                     else -> throw IllegalArgumentException("Unknown destination: $it")
                 }
             }
@@ -121,6 +161,12 @@ class NoteFragment : Fragment() {
             } else {
                 image.visibility = View.VISIBLE
                 image.setImageURI(Uri.parse(viewModel.currentNote.value?.imageUri))
+            }
+
+            if (viewModel.currentNote.value?.audioUri.isNullOrBlank()) {
+                audio.visibility = View.GONE
+            } else {
+                audio.visibility = View.VISIBLE
             }
         }
     }

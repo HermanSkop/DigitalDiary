@@ -5,7 +5,7 @@
     tools:context="com.example.digitaldiary.MainActivity">
 
     <item
-        android:id="@+id/save"
+        android:id="@+id/stop"
         android:orderInCategory="120"
         android:icon="@drawable/ic_save"
         android:title="@string/save"

@@ -23,6 +23,9 @@
         <action
             android:id="@+id/action_NoteFragment_to_PaintFragment"
             app:destination="@id/PaintFragment" />
+        <action
+            android:id="@+id/action_NoteFragment_to_audioFragment"
+            app:destination="@id/audioFragment" />
     </fragment>
     <fragment
         android:id="@+id/PaintFragment"
@@ -30,6 +33,15 @@
         android:label="PaintFragment">
         <action
             android:id="@+id/action_PaintFragment_to_NoteFragment"
+            app:popUpTo="@id/MainFragment"
+            app:destination="@id/NoteFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/audioFragment"
+        android:name="com.example.digitaldiary.ui.audio.AudioFragment"
+        android:label="AudioFragment" >
+        <action
+            android:id="@+id/action_audioFragment_to_NoteFragment"
             app:popUpTo="@id/MainFragment"
             app:destination="@id/NoteFragment" />
     </fragment>

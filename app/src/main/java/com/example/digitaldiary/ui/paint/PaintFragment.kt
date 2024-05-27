@@ -22,13 +22,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.example.digitaldiary.MainActivity
 import com.example.digitaldiary.R
 import com.example.digitaldiary.ViewModel
 import com.example.digitaldiary.databinding.FragmentPaintBinding
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -65,17 +61,12 @@ class PaintFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            val images = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
-            val timeStamp: String =
-                SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-            val newImageInfo = ContentValues().apply {
-                put(MediaStore.Images.Media.DISPLAY_NAME, "image_${timeStamp}.jpg")
-                put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
-            }
+            val (images, newImageInfo) = setUpImage()
             uri = requireContext().contentResolver.insert(images, newImageInfo)
 
-            registerForActivityResult(ActivityResultContracts.TakePicture(), photoCallback)
-                .launch(uri)
+            registerForActivityResult(ActivityResultContracts.TakePicture(), photoCallback).launch(
+                    uri
+                )
         } else {
             Toast.makeText(
                 requireContext(),
@@ -105,8 +96,9 @@ class PaintFragment : Fragment() {
         menuHost.addMenuProvider(object : MenuProvider {
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 when (menuItem.itemId) {
-                    R.id.save -> {
+                    R.id.stop -> {
                         saveImage()
+                        viewModel.navigateEditNote(null)
                         return true
                     }
                 }
@@ -122,13 +114,7 @@ class PaintFragment : Fragment() {
 
     fun saveImage() {
         binding.paintView.getDrawing().let { bitmap ->
-            val images = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
-            val timeStamp: String =
-                SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-            val newImageInfo = ContentValues().apply {
-                put(MediaStore.Images.Media.DISPLAY_NAME, "image_${timeStamp}.jpg")
-                put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
-            }
+            val (images, newImageInfo) = setUpImage()
             requireContext().contentResolver.insert(images, newImageInfo)?.let { uri ->
                 requireContext().contentResolver.openOutputStream(uri).use {
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, it!!)
@@ -136,5 +122,16 @@ class PaintFragment : Fragment() {
                 viewModel.attachImage(uri)
             }
         }
+    }
+
+    private fun setUpImage(): Pair<Uri, ContentValues> {
+        val images = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+        val timeStamp: String =
+            SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val newImageInfo = ContentValues().apply {
+            put(MediaStore.Images.Media.DISPLAY_NAME, "image_${timeStamp}.jpg")
+            put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+        }
+        return Pair(images, newImageInfo)
     }
 }

@@ -11,5 +11,6 @@ data class Note(
     val content: String,
     val date: LocalDate,
     val location: String,
-    val imageUri: String?
+    val imageUri: String?,
+    val audioUri: String?
 )

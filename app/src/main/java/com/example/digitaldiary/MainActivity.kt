@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -22,6 +23,8 @@ import com.example.digitaldiary.databinding.ActivityMainBinding
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 
+
+private const val s = "Choose an option"
 
 class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
@@ -86,7 +89,18 @@ class MainActivity : AppCompatActivity() {
             when (destination.id) {
                 R.id.NoteFragment -> {
                     binding.fab.setOnClickListener { view ->
-                        viewModel.navigateToPaint()
+                        AlertDialog.Builder(this).setTitle(getString(R.string.choose_an_option))
+                            .setItems(
+                                arrayOf(
+                                    getString(R.string.record_audio),
+                                    getString(R.string.make_a_photo)
+                                )
+                            ) { _, which ->
+                                when (which) {
+                                    0 -> viewModel.navigateToAudio()
+                                    1 -> viewModel.navigateToPaint()
+                                }
+                            }.show()
                     }
                     binding.fab.setImageDrawable(
                         ContextCompat.getDrawable(
