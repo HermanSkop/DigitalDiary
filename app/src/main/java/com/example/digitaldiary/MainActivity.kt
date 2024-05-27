@@ -24,8 +24,6 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 
 
-private const val s = "Choose an option"
-
 class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
@@ -69,6 +67,8 @@ class MainActivity : AppCompatActivity() {
         requestLocationPermissions()
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
+        fillDatabaseWithSampleNotes()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -168,4 +168,18 @@ class MainActivity : AppCompatActivity() {
     companion object {
         lateinit var db: AppDatabase
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        db.close()
+    }
+
+    private fun fillDatabaseWithSampleNotes() {
+        for (i in 1..10) {
+            val note = viewModel.generateSampleNote("Sample Note $i")
+            viewModel.insertSampleNote(note)
+        }
+    }
+
+
 }

@@ -158,4 +158,22 @@ class ViewModel : ViewModel() {
             }
         }
     }
+
+    fun insertSampleNote(note: Note) {
+        viewModelScope.launch(Dispatchers.IO) {
+            noteDao.insert(note)
+            refreshNotes()
+        }
+    }
+
+    fun generateSampleNote(title: String): Note {
+        return Note(
+            title = title,
+            content = "This is a sample note",
+            date = LocalDate.now(),
+            location = "Sample Location",
+            imageUri = "",
+            audioUri = ""
+        )
+    }
 }
