@@ -6,9 +6,10 @@ import java.time.LocalDate
 
 @Entity
 data class Note(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val title: String,
     val content: String,
     val date: LocalDate,
-    val location: String
+    val location: String,
+    val imageUri: String?
 )

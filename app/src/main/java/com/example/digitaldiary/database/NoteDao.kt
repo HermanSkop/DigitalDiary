@@ -14,7 +14,7 @@ interface NoteDao {
     fun getAll(): List<Note>
 
     @Insert
-    fun insert(note: Note)
+    fun insert(note: Note): Long
 
     @Delete
     fun delete(note: Note)
@@ -23,6 +23,5 @@ interface NoteDao {
     fun update(note: Note)
 
     @Query("SELECT * FROM note WHERE id = :id")
-    fun get(id: Int): Note
-
+    fun get(id: Long): Note
 }

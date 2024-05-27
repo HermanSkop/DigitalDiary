@@ -86,9 +86,7 @@ class MainActivity : AppCompatActivity() {
             when (destination.id) {
                 R.id.NoteFragment -> {
                     binding.fab.setOnClickListener { view ->
-                        Toast.makeText(
-                            view.context, "Attach functionality not implemented", Toast.LENGTH_SHORT
-                        ).show()
+                        viewModel.navigateToPaint()
                     }
                     binding.fab.setImageDrawable(
                         ContextCompat.getDrawable(

@@ -27,6 +27,11 @@
     <fragment
         android:id="@+id/PaintFragment"
         android:name="com.example.digitaldiary.ui.paint.PaintFragment"
-        android:label="PaintFragment" />
+        android:label="PaintFragment">
+        <action
+            android:id="@+id/action_PaintFragment_to_NoteFragment"
+            app:popUpTo="@id/MainFragment"
+            app:destination="@id/NoteFragment" />
+    </fragment>
 
 </navigation>

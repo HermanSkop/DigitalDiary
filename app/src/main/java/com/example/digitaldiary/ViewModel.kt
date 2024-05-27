@@ -1,10 +1,12 @@
 package com.example.digitaldiary
 
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.digitaldiary.model.Note
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -14,8 +16,8 @@ class ViewModel : ViewModel() {
     val errorMessage: MutableLiveData<String> = MutableLiveData()
     private val noteDao = MainActivity.db.noteDao()
 
-    private val _currentNote: MutableLiveData<Note?> = MutableLiveData()
-    val currentNote: LiveData<Note?> = _currentNote
+    private val _currentNote: MutableLiveData<Note> = MutableLiveData()
+    val currentNote: LiveData<Note> = _currentNote
 
     private val _notes: MutableLiveData<List<Note>> = MutableLiveData()
     val notesLiveData: LiveData<List<Note>> = _notes
@@ -33,19 +35,29 @@ class ViewModel : ViewModel() {
 
     private fun refreshNotes() {
         viewModelScope.launch(Dispatchers.IO) {
-            val allNotes = noteDao.getAll()
-            _notes.postValue(allNotes)
+            _notes.postValue(noteDao.getAll())
+        }
+    }
+    private fun refreshNote(id: Long) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _currentNote.postValue(noteDao.get(id))
         }
     }
 
-    fun navigateEditNote(note: Note) {
+    fun navigateEditNote(note: Note?) {
         _navigateTo.value = Event(Destination.NOTE)
-        _currentNote.value = note
+        note?.let { _currentNote.value = it }
     }
 
     fun navigateCreateNote() {
         _navigateTo.value = Event(Destination.NOTE)
-        _currentNote.value = null
+        _currentNote.value = Note(
+            title = "",
+            content = "",
+            date = LocalDate.now(),
+            location = "",
+            imageUri = ""
+        )
     }
 
 
@@ -53,29 +65,43 @@ class ViewModel : ViewModel() {
         if (title.isBlank()) throw IllegalArgumentException("Title cannot be empty")
         activity.getLocation { location ->
             val note: Note
-            if (currentNote.value == null) {
+            if (currentNote.value?.id?.toInt() == 0) {
                 note = Note(
-                    title = title, content = content, date = LocalDate.now(), location = location
+                    title = title,
+                    content = content,
+                    date = LocalDate.now(),
+                    location = location,
+                    imageUri = currentNote.value?.imageUri
                 )
                 createNote(note)
             } else {
-                note = Note(currentNote.value!!.id, title, content, LocalDate.now(), location)
+                note = Note(
+                    currentNote.value!!.id,
+                    title,
+                    content,
+                    LocalDate.now(),
+                    location,
+                    currentNote.value?.imageUri
+                )
                 updateNote(note)
             }
-            _currentNote.value = note
         }
     }
 
     private fun createNote(note: Note) {
         viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
-            noteDao.insert(note)
-        }.invokeOnCompletion { refreshNotes() }
+            val id = noteDao.insert(note)
+            refreshNote(id)
+            refreshNotes()
+        }
     }
 
     private fun updateNote(note: Note) {
         viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
             noteDao.update(note)
-        }.invokeOnCompletion { refreshNotes() }
+            refreshNote(note.id)
+            refreshNotes()
+        }
     }
 
     fun deleteNote(note: Note) {
@@ -88,6 +114,19 @@ class ViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.Main) {
             errorMessage.value = message
         }
+    }
+
+    fun navigateToPaint() {
+        _navigateTo.value = Event(Destination.PAINT)
+    }
+
+    fun attachImage(uri: Uri) {
+        _currentNote.value = _currentNote.value?.copy(imageUri = uri.toString())
+        navigateEditNote(_currentNote.value)
+    }
+
+    fun removeImage() {
+        _currentNote.value = _currentNote.value?.copy(imageUri = null)
     }
 
     enum class Destination {

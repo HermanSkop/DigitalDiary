@@ -1,6 +1,7 @@
 package com.example.digitaldiary.ui.note
 
 import android.content.res.ColorStateList
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -8,6 +9,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
@@ -24,7 +26,6 @@ import java.time.LocalDate
 class NoteFragment : Fragment() {
 
     private var _binding: FragmentNoteBinding? = null
-
     private val binding get() = _binding!!
     private lateinit var viewModel: ViewModel
 
@@ -34,13 +35,27 @@ class NoteFragment : Fragment() {
         viewModel = ViewModelProvider(requireActivity())[ViewModel::class.java]
         _binding = FragmentNoteBinding.inflate(inflater, container, false)
 
-        fillNote()
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.image.setOnLongClickListener {
+            AlertDialog.Builder(requireContext())
+                .setTitle(resources.getString(R.string.delete_image))
+                .setMessage(resources.getString(R.string.delete_image_message))
+                .setPositiveButton(resources.getString(R.string.yes)) { _, _ ->
+                    viewModel.removeImage()
+                }.setNegativeButton(resources.getString(R.string.no)) { dialog, _ ->
+                    dialog.dismiss()
+                }.show()
+            true
+        }
+        menuSetUp()
+        viewModelSetUp()
+    }
 
+    private fun menuSetUp() {
         val menuHost: MenuHost = requireActivity()
         menuHost.addMenuProvider(object : MenuProvider {
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
@@ -66,20 +81,24 @@ class NoteFragment : Fragment() {
                 menuInflater.inflate(R.menu.menu_note, menu)
             }
         }, viewLifecycleOwner, Lifecycle.State.STARTED)
+    }
 
-        viewModel.navigateTo.observe(viewLifecycleOwner) {
-            val destination = it.getContentIfNotHandled() ?: return@observe
-            when (destination) {
-                ViewModel.Destination.PAINT -> {
-                    findNavController().navigate(R.id.action_NoteFragment_to_PaintFragment)
+    private fun viewModelSetUp() {
+        with(viewModel) {
+            navigateTo.observe(viewLifecycleOwner) {
+                val destination = it.getContentIfNotHandled() ?: return@observe
+                when (destination) {
+                    ViewModel.Destination.PAINT -> {
+                        findNavController().navigate(R.id.action_NoteFragment_to_PaintFragment)
+                    }
+                    // ViewModel.Destination.AUDIO -> TODO()
+                    else -> throw IllegalArgumentException("Unknown destination: $it")
                 }
-                // ViewModel.Destination.AUDIO -> TODO()
-                else -> throw IllegalArgumentException("Unknown destination: $it")
             }
-        }
 
-        viewModel.currentNote.observe(viewLifecycleOwner) {
-            fillNote()
+            currentNote.observe(viewLifecycleOwner) {
+                fillNote()
+            }
         }
     }
 
@@ -96,6 +115,13 @@ class NoteFragment : Fragment() {
             contentLayout.defaultHintTextColor =
                 ColorStateList.valueOf(resources.getColor(R.color.textBright, null))
             location.text = viewModel.currentNote.value?.location
+
+            if (viewModel.currentNote.value?.imageUri.isNullOrBlank()) {
+                image.visibility = View.GONE
+            } else {
+                image.visibility = View.VISIBLE
+                image.setImageURI(Uri.parse(viewModel.currentNote.value?.imageUri))
+            }
         }
     }
 }
